@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:assignment_14/List_Page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
@@ -50,19 +51,23 @@ class _MyAppState extends State<Add_Sales> {
  TextEditingController con3 = TextEditingController();
  TextEditingController con4 = TextEditingController();
 
+
   Textfiled(String txt, String texthint,controll){
   return Padding(
      padding: const EdgeInsets.only(right: 15,left: 15,bottom: 15),
      child: Row(
        children: [
-         CircleAvatar(child:  Text('$txt',style: TextStyle(fontSize: 30),),radius: 28,),
+         CircleAvatar(child:  Text('$txt',style: TextStyle(fontSize: 30),),
+           radius: 28,
+           backgroundColor: Colors.green,
+         ),
          SizedBox(width: 5,),
          Expanded(
              child: TextField(
                controller: controll,
                decoration: InputDecoration(
                    hintText: '$texthint',
-                   border:OutlineInputBorder(borderRadius: BorderRadius.circular(10)) ),
+                   border:OutlineInputBorder(borderRadius: BorderRadius.circular(10)), ),
              ))
        ],
      ),
@@ -74,6 +79,21 @@ class _MyAppState extends State<Add_Sales> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        splashColor: Colors.green,
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ListPage(),));
+          print('Home');
+        },
+        child:  Icon(Icons.home_outlined,
+          size: 35,
+          shadows: [Shadow(color: Colors.blue,offset: Offset(1,1.5))],
+        
+        ),
+      ),
+
+
+      backgroundColor: Colors.orangeAccent,
       appBar: AppBar(
         actions: [
           Padding(
@@ -98,17 +118,21 @@ class _MyAppState extends State<Add_Sales> {
         title: Text('ADD SALES',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold ),),
         centerTitle: true,
       ),
+
+
       body: Column(mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
          Textfiled('1', 'ID',con1,),
 
-
           Padding(
             padding: const EdgeInsets.only(left: 15,right: 15),
             child: Row(
               children: [
-                CircleAvatar(child:  Text('2',style: TextStyle(fontSize: 30),),radius: 28,),
+                CircleAvatar(child:  Text('2',style: TextStyle(fontSize: 30),),
+                  radius: 28,
+                  backgroundColor: Colors.green,
+                ),
                 SizedBox(width: 5,),
                 Expanded(
                   child: DropdownButtonFormField<String>(
@@ -138,18 +162,20 @@ class _MyAppState extends State<Add_Sales> {
           SizedBox(height: 15,),
 
           Textfiled('3', 'Amount',con3),
-          Textfiled('4', 'Price',con3),
+          Textfiled('4', 'Price',con4),
 
           Padding(
             padding: const EdgeInsets.only(left: 130,top: 40),
             child:MaterialButton(
+              splashColor: Colors.orangeAccent,
+              shape: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
               onPressed: (){
                 print('Save Button Clicked');
               },
-              color: Colors.orangeAccent,
+              color: Colors.green,
               height: 50,
               minWidth: 150,
-              child: Text('Save'),
+              child: Text('Save',),
             )
           )
         ],

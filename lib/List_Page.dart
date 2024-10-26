@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:assignment_14/Add_Sales.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -12,6 +13,39 @@ class ListPage extends StatefulWidget {
 }
 
 class _MyAppState extends State<ListPage> {
+
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage()async{
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if(pickedFile != null){
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
+
+ var _size_Icon = 30.0;
+
+  list_tile(icon,name,press){
+   return
+   Padding(
+     padding: const EdgeInsets.all(8.0),
+     child: ListTile(
+       splashColor: Colors.white70,
+       leading: icon,
+       title: Text('$name'),
+       onTap: press,
+     ),
+   );
+
+  }
+
+
+
+
   String? selectedFilter;
   List<String> filterOptions = [
     'فروشات پطرول ۱',
@@ -25,7 +59,9 @@ class _MyAppState extends State<ListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        splashColor: Colors.green,
           onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Add_Sales(),));
             print('Floating Action Pressed');
           },
           shape:  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -33,11 +69,64 @@ class _MyAppState extends State<ListPage> {
       ),
 
         drawer: Drawer(
+          
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [],
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+             Padding(
+               padding: const EdgeInsets.only(left: 20,top: 50),
+               child: Row(
+                 children: [
+                   CircleAvatar(radius: 60,backgroundImage: _image != null ? FileImage(_image!): null,),
+                   SizedBox(width: 110,),
+
+                   Padding(
+                     padding: const EdgeInsets.only(bottom: 80),
+                     child: IconButton(
+                         iconSize: 25,
+                         onPressed: (){
+                           _pickImage();
+                         },
+                         icon: Icon(Icons.file_download_outlined)),
+                   ),
+               ],),
+             ),
+              SizedBox(height: 20,),
+
+              Padding(
+                padding: const EdgeInsets.only(right: 180),
+                child: Text('Name',style: TextStyle(fontSize: 25),),
+              ),
+
+              Divider(indent: 10,endIndent: 10,),
+
+              list_tile(Icon(Icons.report_gmailerrorred_outlined,size:_size_Icon ), 'Reports ',(){
+                print('Report Clicked');
+              }),
+
+              list_tile(Icon(Icons.currency_exchange_sharp,size:_size_Icon ),'Change', (){
+                print('Changes Clicked');
+              }),
+
+              list_tile(Icon(Icons.share,size:_size_Icon ,),'Share', (){
+                print('Share Clicked');
+              }),
+
+              list_tile(Icon(Icons.account_box_outlined,size:_size_Icon ), "About", (){
+                print('About');
+              }),
+
+              list_tile(Icon(Icons.exit_to_app,size:_size_Icon ), 'Exit' , (){
+                print('Exit');
+              })
+
+
+            ],
           ),
         ),
+
+
+
         appBar: AppBar(
           backgroundColor: Colors.green,
           title: Text('SALES',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
