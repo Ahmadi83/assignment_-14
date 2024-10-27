@@ -26,7 +26,9 @@ dev_dependencies:
   path: ^1.8.0
   intl: ^0.19.0
   image_picker: ^1.1.2
-
+  custom_navigation_bar: ^0.8.2
+  fl_chart: ^0.69.0
+#
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
