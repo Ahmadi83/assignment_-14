@@ -1,3 +1,4 @@
+import 'package:assignment_14/List_Page.dart';
 import 'package:flutter/material.dart';
 
 
@@ -66,13 +67,17 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.white,
                       border: Border.all(color: Colors.red, width: 1),
                     ),
+
+
                     child: Padding(
                       padding:  EdgeInsets.symmetric(horizontal: 10),
                       child: TextField(
+                        keyboardType: TextInputType.number,
                         controller: control_2,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Enter Your Password',
+
                         ),
                       ),
                     ),
@@ -81,8 +86,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   SizedBox(height: 20),
                   MaterialButton(onPressed: (){
-                    print(control_1.text);
-                    print(control_2.text);
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ListPage(),));
                   },
                      hoverElevation: 50,
                       height: 40,

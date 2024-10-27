@@ -1,6 +1,7 @@
 import 'package:assignment_14/List_Page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'BottomNavigation.dart';
 
 
 
@@ -50,7 +51,7 @@ class _MyAppState extends State<Change_file> {
         floatingActionButton: FloatingActionButton(
           splashColor: Colors.green,
           onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ListPage(),));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BottomNavigat_page(),));
             print('Home');
           },
           child:  Icon(Icons.home_outlined,

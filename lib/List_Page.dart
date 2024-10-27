@@ -1,9 +1,12 @@
+import 'dart:collection';
 import 'dart:io';
+import 'package:assignment_14/Change_amount.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:assignment_14/Add_Sales.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 
 class ListPage extends StatefulWidget {
   const ListPage({super.key});
@@ -45,7 +48,6 @@ class _MyAppState extends State<ListPage> {
 
 
 
-
   String? selectedFilter;
   List<String> filterOptions = [
     'فروشات پطرول ۱',
@@ -55,18 +57,22 @@ class _MyAppState extends State<ListPage> {
 
   bool IconTheme_State = false;
 
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        splashColor: Colors.green,
-          onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Add_Sales(),));
-            print('Floating Action Pressed');
-          },
-          shape:  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              child: Icon(Icons.save_as_outlined,color: Colors.black87,)
-      ),
+
+      // floatingActionButton: FloatingActionButton(
+      //   splashColor: Colors.green,
+      //     onPressed: (){
+      //       Navigator.push(context, MaterialPageRoute(builder: (context) => Add_Sales(),));
+      //       print('Floating Action Pressed');
+      //     },
+      //     shape:  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      //         child: Icon(Icons.save_as_outlined,color: Colors.black87,)
+      // ),
 
         drawer: Drawer(
           
@@ -100,11 +106,10 @@ class _MyAppState extends State<ListPage> {
 
               Divider(indent: 10,endIndent: 10,),
 
-              list_tile(Icon(Icons.report_gmailerrorred_outlined,size:_size_Icon ), 'Reports ',(){
-                print('Report Clicked');
-              }),
+
 
               list_tile(Icon(Icons.currency_exchange_sharp,size:_size_Icon ),'Change', (){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Change_file(),));
                 print('Changes Clicked');
               }),
 
@@ -212,3 +217,4 @@ class _MyAppState extends State<ListPage> {
         ));
   }
 }
+

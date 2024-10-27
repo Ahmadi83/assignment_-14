@@ -63,11 +63,15 @@ class _MyAppState extends State<Add_Sales> {
          ),
          SizedBox(width: 5,),
          Expanded(
-             child: TextField(
-               controller: controll,
-               decoration: InputDecoration(
-                   hintText: '$texthint',
-                   border:OutlineInputBorder(borderRadius: BorderRadius.circular(10)), ),
+             child: Container(
+               decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Colors.white),
+              // color: Colors.white,
+               child: TextField(
+                 controller: controll,
+                 decoration: InputDecoration(
+                     hintText: '$texthint',
+                     border:OutlineInputBorder(borderRadius: BorderRadius.circular(10)), ),
+               ),
              ))
        ],
      ),
@@ -79,18 +83,18 @@ class _MyAppState extends State<Add_Sales> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        splashColor: Colors.green,
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ListPage(),));
-          print('Home');
-        },
-        child:  Icon(Icons.home_outlined,
-          size: 35,
-          shadows: [Shadow(color: Colors.blue,offset: Offset(1,1.5))],
-        
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   splashColor: Colors.green,
+      //   onPressed: (){
+      //     Navigator.push(context, MaterialPageRoute(builder: (context) => ListPage(),));
+      //     print('Home');
+      //   },
+      //   child:  Icon(Icons.home_outlined,
+      //     size: 35,
+      //     shadows: [Shadow(color: Colors.blue,offset: Offset(1,1.5))],
+      //
+      //   ),
+      // ),
 
 
       backgroundColor: Colors.orangeAccent,
@@ -135,25 +139,29 @@ class _MyAppState extends State<Add_Sales> {
                 ),
                 SizedBox(width: 5,),
                 Expanded(
-                  child: DropdownButtonFormField<String>(
-                    icon: Icon(Icons.playlist_add_check_outlined),
-                    decoration: InputDecoration(
-                      hintText: 'Comodity',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)
+                  child: Container(
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Colors.white),
+
+                    child: DropdownButtonFormField<String>(
+                      icon: Icon(Icons.playlist_add_check_outlined),
+                      decoration: InputDecoration(
+                        hintText: 'Comodity',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)
+                        ),
                       ),
+                      value: selectedOption,
+                      items: [
+                        DropdownMenuItem(value: 'گزینه اول', child: Text('Petrol')),
+                        DropdownMenuItem(value: 'گزینه دوم', child: Text('Diesel')),
+                        DropdownMenuItem(value: 'گزینه سوم', child: Text('A1_Petrol')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedOption = value;
+                        });
+                      },
                     ),
-                    value: selectedOption,
-                    items: [
-                      DropdownMenuItem(value: 'گزینه اول', child: Text('Petrol')),
-                      DropdownMenuItem(value: 'گزینه دوم', child: Text('Diesel')),
-                      DropdownMenuItem(value: 'گزینه سوم', child: Text('A1_Petrol')),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedOption = value;
-                      });
-                    },
                   ),
                 ),
               ],
