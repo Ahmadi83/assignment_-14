@@ -1,50 +1,119 @@
-import 'package:sqflite/sqflite.dart';
+
+import 'dart:async';
+
+import 'package:assignment_14/Database.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:intl/intl.dart';
 
-class DatabaseHelper {
-  static final DatabaseHelper _instance = DatabaseHelper._internal();
-  static Database? _database;
+class DatabaseHelper{
 
-  factory DatabaseHelper() {
-    return _instance;
+  static const  int _version = 1;
+  static const  String _name = 'Fuel.db';
+
+  static Future<Database> _getdb() async{
+
+    return openDatabase( join( await getDatabasesPath(),_name),
+        version: _version,
+
+        onCreate: (db, version) async{
+          await db.execute('CREATE TABLE sales (id INTEGER PRIMARY KEY , comodity TEXT , amount INTEGER , price INTEGER ,date TEXT )');
+          await db.execute('CREATE TABLE changes(id INTEGER PRIMARY KEY AUTO_INCREMENT , petrol_price INTEGER , diesel_price INTEGER, a1_price INTEGER)');
+
+        },
+    );}
+
+
+  Future<int> addChange (Changes changes)async{
+    final db = await _getdb();
+    return await db.insert("changes",changes.tojson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
 
-  DatabaseHelper._internal();
-
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDatabase();
-    return _database!;
+  Future<int> addSale (Sales sales)async{
+   final db = await _getdb();
+   return await db.insert("sales",sales.tojson(),
+   conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'grammar_database.db');
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: (db, version) async {
-        await db.execute('''
-          CREATE TABLE grammar (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT UNIQUE,
-            definition TEXT,
-            types TEXT,
-            examples TEXT
-          )
-        ''');
-      },
-    );
+  Future<int> Delete_Sale (int id )async{
+    final db = await _getdb();
+    return await db.delete('sales',where: 'id = ?',whereArgs: [id]);
   }
 
-  Future<void> insertGrammar(Map<String, dynamic> grammar) async {
-    final db = await database;
-    await db. delete('grammar', whereArgs: [db],);
+  static Future<List<Sales>?> getAll_Sales()async{
+    final db= await _getdb();
+    final List<Map<String,dynamic>> maps = await db.query('sales');
+    return List.generate(maps.length, (index)=> Sales.fromjson(maps[index]),);
   }
 
-  Future<List<Map<String, dynamic>>> getAllGrammar() async {
-    final db = await database;
-    return await db.query('grammar');
-  }
 
-  }
+}
+
+
+
+
+class Sales {
+  final int? id;
+  final String? comodity;
+  final int? amount;
+  final int? price ;
+  final String? date;
+
+  const Sales({required this.id, required this.comodity, required this.amount, required this.price, required this.date});
+
+  factory Sales.fromjson(Map<String,dynamic> json) => Sales(
+    id: json['id'] ,
+    comodity: json['comodity'],
+    amount: json['amount'],
+    price: json['price'],
+    date: json['date']
+  );
+
+
+  Map<String,dynamic> tojson()=>{
+    'id': id,
+    'comodity': comodity,
+    'amount': amount,
+    'price': price,
+    'date': date
+  };
+
+
+
+
+}
+
+
+class Changes{
+
+
+   int? petrol;
+   int? diesel;
+   int? a1_price;
+
+   Changes({required this.petrol,required this.diesel,required this.a1_price});
+
+  factory Changes.fromjson(Map<String,dynamic> json) => Changes(
+
+      petrol: json['petrol_price'],
+      diesel: json['diesel_price'],
+      a1_price: json['a1_price']
+  );
+
+
+
+   Map<String,dynamic> tojson()=>{
+     'petrol_price': petrol,
+     'diesel_price': diesel,
+     'a1_price': a1_price,
+
+   };
+
+
+
+}
+
+
