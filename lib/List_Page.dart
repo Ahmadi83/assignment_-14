@@ -1,12 +1,16 @@
-import 'dart:collection';
 import 'dart:io';
+import 'package:assignment_14/About.dart';
 import 'package:assignment_14/Change_amount.dart';
+import 'package:assignment_14/Database.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:assignment_14/Add_Sales.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:custom_navigation_bar/custom_navigation_bar.dart';
+import 'package:intl/intl.dart';
+
 
 class ListPage extends StatefulWidget {
   const ListPage({super.key});
@@ -16,6 +20,12 @@ class ListPage extends StatefulWidget {
 }
 
 class _MyAppState extends State<ListPage> {
+
+  List<Sales> _sales=[];
+   List<Sales> _filterSales =[];
+
+
+   String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   File? _image;
   final ImagePicker _picker = ImagePicker();
@@ -48,32 +58,58 @@ class _MyAppState extends State<ListPage> {
 
 
 
-  String? selectedFilter;
+  String? selectedFilter = 'All Sales' ;
+
   List<String> filterOptions = [
-    'فروشات پطرول ۱',
-    'فروشات دیزل ۲',
-    'فروشات پطرول روسی ۳'
+    'All Sales',
+    'Petrol Sales',
+    'Diesel Sales',
+    'A_1 Petrol'
   ];
 
   bool IconTheme_State = false;
 
 
+  Future<void> _fetchSales () async{
+    List<Sales>? sales = await DatabaseHelper.getAll_Sales();
+    setState(() {
+      _sales =sales!;
+      _filterSales = _sales.where((sale)=> sale.date == todayDate).toList();
+    });
+  }
+
+
+  void _FilterSales(String? filter){
+    setState(() {
+      selectedFilter = filter;
+      if(filter == 'All Sales'){
+        _filterSales = _sales.where((sale)=> sale.date == todayDate).toList();
+      }else if(filter == 'Petrol Sales'){
+        _filterSales = _sales.where((sale)=> sale.comodity == 'petrol' && sale.date == todayDate ).toList();
+      }else if(filter == 'Diesel Sales'){
+        _filterSales = _sales.where((sale)=> sale.comodity == 'diesel' && sale.date == todayDate).toList();
+      }else if(filter == 'A_1 Petrol'){
+        _filterSales = _sales.where((sale)=> sale.comodity == 'A1_PETROL' && sale.date == todayDate).toList();
+      }
+
+    });
+  }
+
+
+
+
+@override
+  void initState() {
+    super.initState();
+    // selectedFilter = 'Petrol Sales';
+    _fetchSales();
+  }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      // floatingActionButton: FloatingActionButton(
-      //   splashColor: Colors.green,
-      //     onPressed: (){
-      //       Navigator.push(context, MaterialPageRoute(builder: (context) => Add_Sales(),));
-      //       print('Floating Action Pressed');
-      //     },
-      //     shape:  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-      //         child: Icon(Icons.save_as_outlined,color: Colors.black87,)
-      // ),
-
+          backgroundColor: Colors.orange[100],
         drawer: Drawer(
           
           child: Column(
@@ -109,8 +145,11 @@ class _MyAppState extends State<ListPage> {
 
 
               list_tile(Icon(Icons.currency_exchange_sharp,size:_size_Icon ),'Change', (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Change_file(),));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Change_file(),));
                 print('Changes Clicked');
+              }),
+
+              list_tile(Icon(Icons.settings,size:_size_Icon ,),'Settings', (){
               }),
 
               list_tile(Icon(Icons.share,size:_size_Icon ,),'Share', (){
@@ -118,6 +157,7 @@ class _MyAppState extends State<ListPage> {
               }),
 
               list_tile(Icon(Icons.account_box_outlined,size:_size_Icon ), "About", (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => About(),));
                 print('About');
               }),
 
@@ -158,16 +198,25 @@ class _MyAppState extends State<ListPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 200),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.orange[200],
+                      radius: 25,
+                      child: Text('${_filterSales.length}',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+
                   DropdownButton<String>(
                       icon: Icon(Icons.filter_alt),
                       iconEnabledColor: Colors.red,
                       borderRadius: BorderRadius.circular(14),
                       elevation: 20,
                       underline: Divider(
-                        color: Colors.red,
-                      ),
+                        color: Colors.red,),
+
                       value: selectedFilter,
-                      hint: Text('Filter'),
+                      hint: Text('All Sales'),
                       itemHeight: 60,
                       items: filterOptions.map((String option) {
                         return DropdownMenuItem<String>(
@@ -178,7 +227,9 @@ class _MyAppState extends State<ListPage> {
                       onChanged: (String? newvalue) {
                         setState(() {
                           selectedFilter = newvalue;
+                          _FilterSales(newvalue);
                         });
+
                       })
                 ],
               ),
@@ -190,27 +241,63 @@ class _MyAppState extends State<ListPage> {
               Expanded(
                   child: ListView.builder(
                     itemBuilder: (context, index) {
-                   return Card(
-                     color: Colors.orangeAccent,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        leading: Column(mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text('1403/8/3',style: TextStyle(fontSize: 18),),
-                            Text('4 Liters',style: TextStyle(fontSize: 18)),
-                          ],
-                        ),
+                      var sale = _filterSales[index];
+                   return SizedBox(
+                     height: 110,
+                     child: Card(
+                       color: Colors.orange,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                              splashColor: Colors.orange,
+                              title: Text('${sale.date}'),
+                              leading: Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text("${sale.price} AF ", style: TextStyle(fontSize: 18,color: Colors.black),),
+
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text('${sale.amount} ', style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
+                                        Text(' Liters', style: TextStyle(fontSize: 18,)),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              trailing: Text('${sale.comodity?.toUpperCase()}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red)),
+                              onLongPress: ()  async{
+                              await showDialog(context: context, builder: (context) =>  AlertDialog(
+                                 title: Text('Do you Want to delete'),
+                                actions: [
+                                  MaterialButton(onPressed: () async{
+                                    await DatabaseHelper().Delete_Sale(sale.id!);
+                                    Navigator.pop(context);
+                                    _fetchSales();
+                                   },child: Text('Yes'),
+                                  color: Colors.green,),
 
 
+                                  Padding(
+                                    padding: const EdgeInsets.only(left:12,right: 12),
+                                    child: MaterialButton(onPressed: (){
+                                      Navigator.pop(context);
+                                     },child:  Text('No'),color: Colors.red,),
+                                  ),
+                                ],));
 
-                        trailing: Text('Petrol',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.red),),
-                        onTap: (){},
-                      ),
-                    ),
-                  );
+                              },
+                            ),
+                          )
+                      ));
+
+
                 },
-                itemCount: 20,
+
+                itemCount:   _filterSales.length
               ))
             ],
           ),
@@ -218,3 +305,8 @@ class _MyAppState extends State<ListPage> {
   }
 }
 
+
+
+
+
+//

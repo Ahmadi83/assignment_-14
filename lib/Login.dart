@@ -1,5 +1,7 @@
+import 'package:assignment_14/BottomNavigation.dart';
 import 'package:assignment_14/List_Page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 
 
@@ -17,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(systemNavigationBarColor: Colors.blue));
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.green,),
       backgroundColor: Colors.orangeAccent,
@@ -86,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   SizedBox(height: 20),
                   MaterialButton(onPressed: (){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ListPage(),));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavigat_page(),));
                   },
                      hoverElevation: 50,
                       height: 40,
