@@ -18,17 +18,11 @@ class DatabaseHelper{
         version: _version,
 
         onCreate: (db, version) async{
-          await db.execute('CREATE TABLE sales (id INTEGER PRIMARY KEY AUTOINCREMENT , comodity TEXT , amount INTEGER , price INTEGER ,date TEXT )');
-          await db.execute('CREATE TABLE changes( id INTEGER PRIMARY KEY AUTOINCREMENT , petrol_price INTEGER , diesel_price INTEGER, a1_price INTEGER)');
+          await db.execute('CREATE TABLE sales (id INTEGER PRIMARY KEY , comodity TEXT , amount INTEGER , price INTEGER ,date TEXT )');
+          await db.execute('CREATE TABLE changes(id INTEGER PRIMARY KEY AUTO_INCREMENT , petrol_price INTEGER , diesel_price INTEGER, a1_price INTEGER)');
 
         },
     );}
-
-
-  // Future<int> getAllSalesId (int id)async {
-  //   final db = await _getdb();
-  //   return await db.delete('sales', where: 'id = ?', whereArgs: [id],);
-  // }
 
 
   Future<int> addChange (Changes changes)async{
@@ -37,12 +31,6 @@ class DatabaseHelper{
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<int> Delete_Change ()async{
-    final db = await _getdb();
-    return await db.delete('changes');
-  }
-
-
 
   Future<int> addSale (Sales sales)async{
    final db = await _getdb();
@@ -50,45 +38,17 @@ class DatabaseHelper{
    conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-   Future<int?> Delete_Sale (int id )async{
+  Future<int> Delete_Sale (int id )async{
     final db = await _getdb();
-     await db.delete('sales',where: 'id = ?',whereArgs: [id]);
-    await db.rawDelete('DELETE FROM sqlite_sequence WHERE name = ?', ['sales']);
+    return await db.delete('sales',where: 'id = ?',whereArgs: [id]);
   }
 
   static Future<List<Sales>?> getAll_Sales()async{
     final db= await _getdb();
     final List<Map<String,dynamic>> maps = await db.query('sales');
-    return List.generate(maps.length, (index)=> Sales.fromjson(maps[index]),
-    );
+    return List.generate(maps.length, (index)=> Sales.fromjson(maps[index]),);
   }
 
-
-  static Future<List<Changes>?> getAll_Changes()async{
-    final db= await _getdb();
-    final List<Map<String,dynamic>> maps = await db.query('changes');
-    return List.generate(maps.length, (index)=> Changes .fromjson(maps[index]),);
-  }
-
-
-  Future<int> getNextId()async {
-    final db = await _getdb();
-    final result = await db.rawQuery('SELECT MAX(id) + 1 as next_id FROM sales');
-    int? nextid = result.first['next_id'] as int? ?? 1;
-    return nextid;
-  }
-
-
-  static Future<DateTime?> getEarliestDate()async{
-    final db = await _getdb();
-    final List<Map<String, dynamic>> result = await db.rawQuery(
-        'SELECT MIN(date) as min_date FROM sales');
-    if(result.isNotEmpty && result.first['min_date'] != null){
-      return DateTime.parse(result.first['min_date']);
-    }else{
-      return null;
-    }
-  }
 
 }
 
@@ -102,22 +62,19 @@ class Sales {
   final int? price ;
   final String? date;
 
-  const Sales({this.id, required this.comodity, required this.amount, required this.price, required this.date});
+  const Sales({required this.id, required this.comodity, required this.amount, required this.price, required this.date});
 
   factory Sales.fromjson(Map<String,dynamic> json) => Sales(
-    id: json['id'],
+    id: json['id'] ,
     comodity: json['comodity'],
     amount: json['amount'],
     price: json['price'],
     date: json['date']
   );
 
-  DateTime getDataAsDateTime(){
-    return DateTime.parse(date!);
-  }
 
   Map<String,dynamic> tojson()=>{
-    'id':id,
+    'id': id,
     'comodity': comodity,
     'amount': amount,
     'price': price,
